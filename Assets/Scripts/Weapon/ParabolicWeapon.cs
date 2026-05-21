@@ -6,9 +6,19 @@ public class ParabolicWeapon : Weapon
     public Transform firePoint;
     public float throwForce = 10f;
     public float upwardForce = 1.5f;
+    Animator anim;
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
 
     protected override void PerformAttack()
     {
+        if (anim != null) 
+        {
+            anim.SetTrigger("Shoot");
+        }
         Debug.Log($"{weaponName}: ¡Granada va!");
 
         GameObject grenade = Instantiate(grenadePrefab, firePoint.position, firePoint.rotation);

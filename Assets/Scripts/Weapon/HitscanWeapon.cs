@@ -35,19 +35,17 @@ public class HitscanWeapon : Weapon
             GameObject objeto = Instantiate(HitInstance, hit.point, Quaternion.identity);
             objeto.transform.parent = hit.collider.transform;
 
-            IDamageable health = objeto.GetComponent<IDamageable>();
-            if(health == null)  health = objeto.GetComponentInParent<IDamageable>();
+            IDamageable health = hit.collider.GetComponent<IDamageable>();
+            if(health == null)  health = hit.collider.GetComponentInParent<IDamageable>();
             health?.TakeDamage(damage);
-
+            
             if (hit.rigidbody != null && !hit.rigidbody.isKinematic) 
             {
                 Rigidbody rb = hit.rigidbody;
                 
                 rb.AddForceAtPosition(-hit.normal * impactBulletForce, hit.point, ForceMode.Impulse);
             }
-            // Aquí aplicaríamos daño si el objeto golpeado tiene la interfaz IDamageable
-            // var target = hit.collider.GetComponent<IDamageable>();
-            // target?.TakeDamage(damage);
+
         }
     }
 }

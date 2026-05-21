@@ -15,11 +15,6 @@ public class RagdollAnimator : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     public void EnableRagdoll() 
     {
         anim.enabled = false;

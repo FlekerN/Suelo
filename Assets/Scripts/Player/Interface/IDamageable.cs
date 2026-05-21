@@ -1,11 +1,12 @@
 using System;
-using UnityEngine;
 
-public interface IDamageable 
+public interface IDamageable
 {
     float MaxHealth { get; }
     float CurrentHealth { get; }
 
     event Action<float, float> OnHealthChanged;
-    public void TakeDamage(float dmg);
+    event Action OnDeath;
+
+    void TakeDamage(float dmg);
 }

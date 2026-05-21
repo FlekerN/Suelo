@@ -19,7 +19,6 @@ public abstract class Weapon : MonoBehaviour
 
     // Cada arma específica definirá CÓMO ataca aquí
     protected abstract void PerformAttack();
-
-
+    
 }
 
