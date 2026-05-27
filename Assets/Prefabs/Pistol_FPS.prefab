@@ -75,6 +75,9 @@ MonoBehaviour:
   impactBulletForce: 36
   cameraTransform: {fileID: 0}
   HitInstance: {fileID: 7466402338513874508, guid: 61f995ebef2e2534b92cd5a25ac39e0a, type: 3}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 119
 --- !u!1001 &7984238483776161293
 PrefabInstance:
   m_ObjectHideFlags: 0

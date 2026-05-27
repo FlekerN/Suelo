@@ -10,4 +10,5 @@ public interface IPlayerInput
 
     event Action OnShootEvent;
     event Action<float> OnSwitchWeaponEvent;
+    event Action OnInteractEvent; 
 }

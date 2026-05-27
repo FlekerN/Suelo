@@ -1,13 +1,17 @@
 using UnityEngine;
-[RequireComponent(typeof(Animator))]
 
+[RequireComponent(typeof(Animator))]
 public class HitscanWeapon : Weapon
 {
     public float damage = 20f;
     public float range = 100f;
     public float impactBulletForce = 36f;
-    public Transform cameraTransform; // Referencia a la cámara para apuntar
+
+    public Transform cameraTransform;
     public GameObject HitInstance;
+
+    [SerializeField] private LayerMask shootMask;
+
     Animator anim;
 
     private void Start()
@@ -19,33 +23,50 @@ public class HitscanWeapon : Weapon
     {
         Debug.Log($"{weaponName}: ¡Pew pew! (Raycast)");
 
-        if (anim != null) 
+        if (anim != null)
         {
             anim.SetTrigger("Shoot");
         }
-        Debug.DrawRay(cameraTransform.position, cameraTransform.forward * range, Color.red, 1.5f);
-        // Lanzamos el rayo desde la cámara
+
+        Debug.DrawRay(
+            cameraTransform.position,
+            cameraTransform.forward * range,
+            Color.red,
+            1.5f);
+
         if (Physics.Raycast(
-            cameraTransform.position, //origen
-            cameraTransform.forward, //direccion
-            out RaycastHit hit,  //informacion del impacto
-            range))                 //distancia
+            cameraTransform.position,
+            cameraTransform.forward,
+            out RaycastHit hit,
+            range,
+            shootMask,
+            QueryTriggerInteraction.Ignore))
         {
             Debug.Log($"Impacto en: {hit.collider.name}");
-            GameObject objeto = Instantiate(HitInstance, hit.point, Quaternion.identity);
+
+            GameObject objeto = Instantiate(
+                HitInstance,
+                hit.point,
+                Quaternion.identity);
+
             objeto.transform.parent = hit.collider.transform;
 
             IDamageable health = hit.collider.GetComponent<IDamageable>();
-            if(health == null)  health = hit.collider.GetComponentInParent<IDamageable>();
+
+            if (health == null)
+                health = hit.collider.GetComponentInParent<IDamageable>();
+
             health?.TakeDamage(damage);
-            
-            if (hit.rigidbody != null && !hit.rigidbody.isKinematic) 
+
+            if (hit.rigidbody != null && !hit.rigidbody.isKinematic)
             {
                 Rigidbody rb = hit.rigidbody;
-                
-                rb.AddForceAtPosition(-hit.normal * impactBulletForce, hit.point, ForceMode.Impulse);
-            }
 
+                rb.AddForceAtPosition(
+                    -hit.normal * impactBulletForce,
+                    hit.point,
+                    ForceMode.Impulse);
+            }
         }
     }
 }

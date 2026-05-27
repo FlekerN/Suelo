@@ -8,12 +8,14 @@ public class PlayerInputReader : MonoBehaviour, IPlayerInput
 
     public event Action OnShootEvent;
     public event Action<float> OnSwitchWeaponEvent;
+    public event Action OnInteractEvent;
 
     void Awake()
     {
         _gameInput = new FPSInputactions();
 
         _gameInput.Player.Shoot.performed += DoShoot;
+        _gameInput.Player.Interact.performed += DoInteract;
         _gameInput.Player.SwitchWeapon.performed += DoSwitchWeapon;
     }
 
@@ -23,6 +25,10 @@ public class PlayerInputReader : MonoBehaviour, IPlayerInput
     private void DoShoot(InputAction.CallbackContext context)
     {
         OnShootEvent?.Invoke();
+    }
+    private void DoInteract(InputAction.CallbackContext context)
+    {
+        OnInteractEvent?.Invoke();
     }
     private void DoSwitchWeapon(InputAction.CallbackContext context)
     {
