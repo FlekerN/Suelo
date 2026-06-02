@@ -1,0 +1,95 @@
+﻿using UnityEngine;
+
+[RequireComponent(typeof(UnityEngine.AI.NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
+
+public class LocomotionSimpleAgent : MonoBehaviour
+{
+    Animator anim;
+    UnityEngine.AI.NavMeshAgent agent;
+
+    Vector2 smoothDeltaPosition = Vector2.zero;
+    Vector2 velocity = Vector2.zero;
+
+    private bool isEnemy;
+    private EnemyAI enemyAI;
+    private Transform player;
+
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+        agent.updatePosition = false;
+
+        isEnemy = gameObject.CompareTag("Enemy");
+
+        if (isEnemy)
+        {
+            enemyAI = GetComponent<EnemyAI>();
+            player = GameObject.FindWithTag("Player").transform;
+        }
+    }
+
+    void Update()
+    {
+        if (isEnemy && enemyAI == null)
+            return;
+            
+		if (isEnemy && enemyAI != null)
+		{
+			bool attacking = enemyAI.state == EnemyState.Attack;
+			bool standingBy = enemyAI.state == EnemyState.Standby;
+
+			anim.SetBool("Attack", attacking);
+			anim.SetBool("StandBy", standingBy && !attacking);
+		}
+
+		if (!agent.isActiveAndEnabled)
+		{
+			anim.SetBool("move", false);
+			anim.SetFloat("velx", 0f);
+			anim.SetFloat("vely", 0f);
+			return;
+		}
+
+        Vector3 worldDeltaPosition = agent.nextPosition - transform.position;
+
+        float dx = Vector3.Dot(transform.right, worldDeltaPosition);
+        float dy = Vector3.Dot(transform.forward, worldDeltaPosition);
+
+        Vector2 deltaPosition = new Vector2(dx, dy);
+
+        float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+        smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
+
+        if (Time.deltaTime > 1e-5f)
+            velocity = smoothDeltaPosition / Time.deltaTime;
+
+        bool shouldMove =
+            velocity.magnitude > 0.5f &&
+            agent.remainingDistance > agent.radius;
+
+        anim.SetBool("move", shouldMove);
+        anim.SetFloat("velx", velocity.x);
+        anim.SetFloat("vely", velocity.y);
+
+        LookAt lookAt = GetComponent<LookAt>();
+
+        if (lookAt)
+            lookAt.lookAtTargetPosition = agent.steeringTarget + transform.forward;
+    }
+
+	void OnAnimatorMove()
+	{
+		if (!agent.isActiveAndEnabled)
+			return;
+
+		Vector3 position = anim.rootPosition;
+		position.y = agent.nextPosition.y;
+
+		transform.position = position;
+
+		agent.nextPosition = transform.position;
+	}
+}

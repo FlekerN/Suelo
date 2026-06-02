@@ -75,9 +75,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissileExplosion
   fuerzaExplosion: 700
-  radioExplosion: 5
+  radioExplosion: 50
   fuerzaVertical: 1
-  damage: 200
+  damage: 500
   explosionPrefab: {fileID: 5481530993414605263, guid: bcc73beb99d88b442a342ba6f3005ad4, type: 3}
 --- !u!65 &5809683173853920024
 BoxCollider:
